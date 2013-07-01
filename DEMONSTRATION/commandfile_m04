@@ -1,0 +1,301 @@
+Please do not use TABS in this file. 
+
+------------------------------------------------------------------------
+Screen output parameters
+------------------------------------------------------------------------
+
+How much output do you want to see on your screen ?
+(0 = low verbosity, 1 = medium, 2 = high, 3 = very high, ...)
+
+INT     1       IVERBOSE
+0
+
+Note: the screen output is also written in a file 'screenN', where
+N stands for the processor writing the file. So if you are running
+a job on 4 processors, you will find 4 files: 
+screen0, screen1, screen2, screen3 written by the processes 0 to 3.
+
+------------------------------------------------------------------------
+Transverse direction parameter definition
+----------------------------------------------------------------------
+
+Periodic distance in z-direction
+REAL    1       ZSPAN
+6.283185
+
+Number of Fourier modes (power of 2: 2, 4, 16, 32, ...) 
+to be used in calculations
+INT     1       NBFMODE
+16
+
+Number of modes to be activated (1 up to NBFMOD)
+INT     1       NACTIVEMODES
+8
+
+Solution strategy for parallel computing: 1 = solve in Fourier space
+                                          2 = solve in FEM space
+INT     1       ISOLSTRATEGY
+1
+
+Linear solver to be used: 1 = SuperLU
+                          2 = SAMG
+INT     1       ILINSOLVE
+1
+
+Formulation of transverse derivatives (1=Spectral, 2=Finite Difference)
+INT     1       IZDERIV
+1
+
+------------------------------------------------------------------------
+Fluid model definition
+------------------------------------------------------------------------
+
+Density of (incompressible) fluid
+REAL    1       DENSITY
+1.d0
+
+Molecular viscosity of fluid
+REAL    1       MUMOLEC
+1.d0
+
+0: Nothing
+1: SUPG (or Laplacien ordre 4 with a change in sgs.F)
+2: Smagorinski statique (+SUPG)
+3: Wale (+SUPG)
+Subgrid-scale model (laminar, smagorinsky)
+INT     1       ISGSMODEL
+0
+
+Flow model (1: incompressible NS, 2: potential flow)
+            3: Deryl's version 4: Cylindrical
+INT     1       IMODEL 
+4
+
+Sqew symmetric: 0.5 ; conservative: 1 ; nothing: 0
+REAL    1       ALPHAC
+0.5d0
+
+Passive Scalar
+INT     1       NPASSCAL
+2
+
+------------------------------------------------------------------------
+Channel flow settings
+------------------------------------------------------------------------
+
+The parameters in this section must only be set and activated in case
+you are running a pipe or channel flow calculation. If not, please do
+not touch this section.
+
+Forcing function
+INT     1       IFORCE  
+0
+
+Reynolds number to be set
+REAL    1       REBULK
+1000.0
+
+------------------------------------------------------------------------
+Definition of time integration 
+------------------------------------------------------------------------
+Time stepping algorithm
+   0 = 2nd order Adams-Bashforth
+   2 = 2nd order, 2 stage explicit RK
+   3 = 2nd order, 3 stage explicit RK
+   4 = 4th order, 4 stage explicit RK
+INT     1       ITSTEPPING
+0
+
+
+Total number of time steps to perform during this calculation
+INT     1       NTSTEPS
+200
+
+
+Size of individual time steps
+REAL    1       DELTAT
+0.01
+
+Blending factor for diffusion terms (integration temporelle)
+- 0.0 is first-order explicit
+- 0.5 is second-order crank-nicholson
+- 1.0 is first-order implicit
+REAL    1       ALPHAD
+0.5d0
+
+(For good accuracy, please keep ALPHAD fixed at 0.5)
+
+------------------------------------------------------------------------
+Definition of linear solution method 
+------------------------------------------------------------------------
+(nothing for the time being)
+
+------------------------------------------------------------------------
+File input / output settings 
+------------------------------------------------------------------------
+
+Name of files containing definition of grid, boundary conditions, ...
+(Without extension .sfl, .con, .num, ...!)
+CHAR    1       GRIDFILE
+Mesh40.neu
+
+Name of file containing initial solution
+(Without extension .sfl!)
+CHAR    1       INSOL
+Mesh40_hydro_in
+
+Name of file containing final solution
+(Without extension .sfl!)
+CHAR    1       OUTSOL
+Mesh40_hydro_out
+
+Start from scratch (0) or restart from initial solution file (1)
+(2) pour repartir avec la solution mais recommence a zero
+INT     1       IRESTART
+0
+
+Randomize or not at restart (0/1) ?
+INT     1       IRANDOM
+0
+
+scale factor
+for irandom  1 percent fluctuation
+             2 magnitude of random forcing terms
+REAL    1       RANDSCALE
+0.01d0
+
+Number of iterations between intermediate random
+INT     1       RANDSKIP
+100000000
+
+
+Number of iterations between intermediate writedowns
+INT     1       WRITESKIP
+50
+
+INT        1       ISOLOUT  (1 si oui et si pas 1 et ba RIEN !!!)
+1
+
+Computation of the aerodynamic forces on NSWALLS if AEROFOR=1
+INT     1       IAEROFOR
+0
+
+------------------------------------------------------------------------
+Initial conditions, reference values
+------------------------------------------------------------------------
+
+Give here reference variations for all flow quantities
+REAL    4       REFVAL
+1.d0      1.d0      1.d0      1.d0
+
+(order: DU, DV, DW, DP where e.g. DU = Umax-Umin) 
+
+Give here a reference length scale
+REAL    1       REFLEN
+1.d0
+
+Give here initial values for all flow quantities
+REAL    4       INIVAL
+0.d0      0.d0      0.d0      0.d0
+
+(order: U,V,W,P)
+
+Scaling factor for JST dissipation in momentum equation
+REAL    1       ALPHA
+0.0d0
+#smag: 0.0361d0
+#wale: 0.6008d0
+
+Estimate of maximal flow speed in the entire domain
+REAL    1       BETA
+2.0d0
+
+REAL    1       MAXKE
+100.d0
+
+------------------------------------------------------------------------
+Boundary condition definition
+------------------------------------------------------------------------
+
+For each boundary segment in the mesh, you must specify a boundary
+condition in this section. 
+
+For each segment, you must first specify the boundary condition type:
+
+0: Slip wall (tangential velocity condition)
+1: Noslip wall (zero velocity condition)
+2: Inlet (velocity fixed, pressure extrapolated)
+3: Inlet with parabolic flow profile (pressure extrapolated)
+4: Outlet (velocity extrapolated, pressure fixed)
+5: Farfield (not yet implemented)
+6: Inlet with variation in z-direction 
+7: Axis
+8: Oscillations in A*sin(B*t)
+15 : force bc
+Next, you specify the imposed values of U,V,W,P on the considered
+boundary segment. From these values, the boundary condition will 
+take only the information it strictly needs. For instance, at an
+outlet, the boundary condition will ignore the values for velocity
+set in this file, since only the pressure is fixed there.
+
+Here we go.
+===============================
+Boundary Conditions
+===============================
+-------------------------------
+segment 0 
+-------------------------------
+Zeroeth boundary condition type
+INT     1       ISEG0
+7
+
+Zeroeth boundary condition values
+REAL    4       RSEG0 
+0.d0      0.d0      0.d0    0.d0
+
+-------------------------------
+segment 1 
+-------------------------------
+First boundary condition type
+INT     1       ISEG1
+1
+
+First boundary condition values
+REAL    4       RSEG1 
+0.d0      0.0d0      0.d0      10.d0
+
+-------------------------------
+segment 2 
+-------------------------------
+First boundary condition type
+INT     1       ISEG2
+1
+
+First boundary condition values
+REAL    4       RSEG2 
+0.d0      0.0d0      0.d0      0.d0
+
+-------------------------------
+segment 3 
+-------------------------------
+First boundary condition type
+INT     1       ISEG3
+1
+
+First boundary condition values
+REAL    4       RSEG3 
+0.d0      0.0d0      0.d0      -10.d0
+
+====================================
+
+Fix pressure or not? 1 pour fixer
+INT     1       IFIXPRES
+1
+
+Fix pressure or not?
+INT     1       IFIXNOD
+10
+
+------------------------------------------------------------------------
+That's all folks
+------------------------------------------------------------------------

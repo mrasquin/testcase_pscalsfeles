@@ -1,0 +1,8 @@
+~/SF/PSCALSFELES/EXE/sflpost ./GRID/Mesh40.neu ./OUTPUT/ 4 4 0  
+#~/SF/PSCALSFELES/EXE/sflpost ./GRID/Mesh40.neu ./OUTPUT/ 1 4 0
+#sflpost ./GRID/square-fine.neu ./OUTPUT/ 1 10 0 1 2 3 4 5 6 7 8  
+#sflpost ./GRID/square-coarse.neu ./OUTPUT/ 1 10 0 1 2 3 4 5 6 7 8  
+#sflpost ./GRID/SPHERE20.neu ./OUTPUT/ 1 10 0 1 2 3 4 5 6 7 8  
+#sflpost ./GRID/SCF40_S018.neu ./OUTPUT/ 1 4 0 1 2 3 4 5 6 7 8  
+#sflpost ./GRID/essai.neu ./OUTPUT/ 1 4 0 1 2 3 4 5 6 7 8  
+#sflpost ./GRID/SCF50_d1.neu ./OUTPUT/ 1 4 0 1 2 3 4 5 6 7 8  
